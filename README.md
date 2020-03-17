@@ -1,5 +1,5 @@
 # mix_ner 
 
-## using flair tools
+using flair tools (https://github.com/flairNLP/flair.git)
 
 ### ELMo, BERT, Flair, and XLNet.
