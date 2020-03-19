@@ -16,6 +16,8 @@ from flair.data import Corpus
 from flair.datasets import ColumnCorpus
 from flair.embeddings import ELMoEmbeddings
 from flair.embeddings import BertEmbeddings
+from flair.embeddings import XLNetEmbeddings
+
 
 os.environ["CUDA_VISIBLE_DEVICES"]="0,1,2"
 
@@ -24,7 +26,7 @@ def parse_args():
     # parse arguments
     ## general
     arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument('--embed', default='elmo',
+    arg_parser.add_argument('--embed', default='bert',
                             help='elmo bert flair')
     return arg_parser.parse_args()
 
@@ -52,13 +54,14 @@ tag_dictionary = corpus.make_tag_dictionary(tag_type=tag_type)
 print(tag_dictionary)
 
 # 4. initialize embeddings
-
 embed = ARGS.embed
 print(embed)
 if embed == "elmo":
     embedding = ELMoEmbeddings("small")
 elif embed == "bert":
     embedding = BertEmbeddings()
+elif embed == "xlnet":
+    embedding = XLNetEmbeddings()
 
 # 5. initialize sequence tagger
 from flair.models import SequenceTagger
@@ -83,8 +86,8 @@ trainer.train("./log/%s_%s/" % (ARGS.embed, str(timestamp)),
               max_epochs=150)
 
 
-from flair.visual.training_curves import Plotter
-plotter = Plotter()
-plotter.plot_weights('./log/elmo/weights.txt')
+# from flair.visual.training_curves import Plotter
+# plotter = Plotter()
+# plotter.plot_weights('./log/elmo/weights.txt')
 
 

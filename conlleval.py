@@ -112,7 +112,7 @@ def count_chunks(true_seqs, pred_seqs):
 
     prev_true_tag, prev_pred_tag = 'O', 'O'
     correct_chunk = None
-
+    
     for true_tag, pred_tag in zip(true_seqs, pred_seqs):
         if true_tag == pred_tag:
             correct_counts[true_tag] += 1
