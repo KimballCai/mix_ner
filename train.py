@@ -12,22 +12,24 @@ import os
 from datetime import datetime
 import argparse
 
+os.environ["CUDA_VISIBLE_DEVICES"]="2"
+
 from flair.data import Corpus
 from flair.datasets import ColumnCorpus
 from flair.embeddings import ELMoEmbeddings
 from flair.embeddings import BertEmbeddings
 from flair.embeddings import XLNetEmbeddings
-
-
-os.environ["CUDA_VISIBLE_DEVICES"]="0,1,2"
-
+from flair.embeddings import FlairEmbeddings
+from flair.embeddings import StackedEmbeddings
+from flair.embeddings import CharacterEmbeddings, WordEmbeddings
+from flair.embeddings import PooledFlairEmbeddings
 
 def parse_args():
     # parse arguments
     ## general
     arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument('--embed', default='bert',
-                            help='elmo bert flair')
+    arg_parser.add_argument('--embed', default='bert',help='elmo bert flair')
+    arg_parser.add_argument('--batch', default=64,help='32 64 128')
     return arg_parser.parse_args()
 
 ARGS = parse_args()
@@ -56,12 +58,36 @@ print(tag_dictionary)
 # 4. initialize embeddings
 embed = ARGS.embed
 print(embed)
-if embed == "elmo":
+if embed == "elmo_m":
+    embedding = ELMoEmbeddings("medium")
+elif embed == "elmo_s":
     embedding = ELMoEmbeddings("small")
 elif embed == "bert":
     embedding = BertEmbeddings()
 elif embed == "xlnet":
     embedding = XLNetEmbeddings()
+elif embed == "flair":
+    embedding = StackedEmbeddings([FlairEmbeddings('news-forward'),FlairEmbeddings('news-backward')])
+elif embed == "mix_ebx":
+    embedding = StackedEmbeddings([
+        ELMoEmbeddings("small"),
+        BertEmbeddings(),
+        XLNetEmbeddings(),
+    ])
+elif embed == "mix_flair":
+    embedding = StackedEmbeddings([
+        WordEmbeddings('glove'),
+
+        # comment in this line to use character embeddings
+        CharacterEmbeddings(),
+
+        # comment in these lines to use flair embeddings
+        FlairEmbeddings('news-forward'),
+        FlairEmbeddings('news-backward'),
+    ])
+elif embed == "pool_flair_f":
+    embedding = StackedEmbeddings([PooledFlairEmbeddings('news-forward'),PooledFlairEmbeddings('news-backward')])
+    
 
 # 5. initialize sequence tagger
 from flair.models import SequenceTagger
@@ -82,7 +108,7 @@ timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
 # 7. start training
 trainer.train("./log/%s_%s/" % (ARGS.embed, str(timestamp)),
               learning_rate=0.01,
-              mini_batch_size=64,
+              mini_batch_size=int(ARGS.batch),
               max_epochs=150)
 
 
