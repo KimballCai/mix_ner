@@ -12,8 +12,6 @@ import os
 from datetime import datetime
 import argparse
 
-os.environ["CUDA_VISIBLE_DEVICES"]="2"
-
 from flair.data import Corpus
 from flair.datasets import ColumnCorpus
 from flair.embeddings import ELMoEmbeddings
@@ -29,7 +27,8 @@ def parse_args():
     ## general
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument('--embed', default='bert',help='elmo bert flair')
-    arg_parser.add_argument('--batch', default=64,help='32 64 128')
+    arg_parser.add_argument('--batch', default=64,help='16 32 64 128')
+    arg_parser.add_argument('--hiddensize', default=256,help='128 64 512')
     return arg_parser.parse_args()
 
 ARGS = parse_args()
@@ -92,7 +91,7 @@ elif embed == "pool_flair_f":
 # 5. initialize sequence tagger
 from flair.models import SequenceTagger
 
-tagger: SequenceTagger = SequenceTagger(hidden_size=256,
+tagger: SequenceTagger = SequenceTagger(hidden_size=int(ARGS.hiddensize),
                                         embeddings=embedding,
                                         tag_dictionary=tag_dictionary,
                                         tag_type=tag_type,
@@ -106,7 +105,7 @@ trainer: ModelTrainer = ModelTrainer(tagger, corpus)
 timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
 
 # 7. start training
-trainer.train("./log/%s_%s/" % (ARGS.embed, str(timestamp)),
+trainer.train("./log/%s_%s_%s/" % (ARGS.embed, str(timestamp), str(ARGS.hiddensize)),
               learning_rate=0.01,
               mini_batch_size=int(ARGS.batch),
               max_epochs=150)
