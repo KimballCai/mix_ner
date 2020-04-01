@@ -51,10 +51,10 @@ tagger: SequenceTagger = SequenceTagger(hidden_size=256,
                                         tag_type=tag_type,
                                         use_crf=True)
 
-model = SequenceTagger.load('./log/elmo/best-model.pt')
-
-from conlleval import evaluate
-
+# model = SequenceTagger.load('./log/elmo/best-model.pt')
+#
+# from conlleval import evaluate
+#
 pred = []
 real = []
 
@@ -62,12 +62,17 @@ for sentence in corpus.test:
     for token in sentence.tokens:
         real.append(token.get_tag("ner").value)
 
-for sentence in corpus.test:
-    model.predict(sentence,all_tag_prob=True)
-    for token in sentence.tokens:
-        pred.append(token.get_tag("ner").value)
+def model_prediction(model):
+    model_pred = []
+    for sentence in corpus.test:
+        model.predict(sentence)
+        for token in sentence.tokens:
+            model_pred.append(token.get_tag("ner").value)
+    return model_pred
 
+from conlleval import evaluate
 
-print(corpus)
-print(evaluate(real,pred))
-
+pool_flair_model = SequenceTagger.load('./log/pool_flair_f_20200330002549/best-model.pt')
+print("****** pool_flair prediction ******")
+pool_flair_pred = model_prediction(pool_flair_model)
+print(evaluate(real,pool_flair_pred))

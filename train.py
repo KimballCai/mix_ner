@@ -12,6 +12,21 @@ import os
 from datetime import datetime
 import argparse
 
+def parse_args():
+    # parse arguments
+    ## general
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument('--embed', default='bert',help='elmo bert flair')
+    arg_parser.add_argument('--batch', default=64,help='16 32 64 128')
+    arg_parser.add_argument('--hiddensize', default=256,help='128 64 512')
+    arg_parser.add_argument('--gpu', default="0", help='0,1,2')
+    return arg_parser.parse_args()
+
+ARGS = parse_args()
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ARGS.gpu
+
+
 from flair.data import Corpus
 from flair.datasets import ColumnCorpus
 from flair.embeddings import ELMoEmbeddings
@@ -22,16 +37,7 @@ from flair.embeddings import StackedEmbeddings
 from flair.embeddings import CharacterEmbeddings, WordEmbeddings
 from flair.embeddings import PooledFlairEmbeddings
 
-def parse_args():
-    # parse arguments
-    ## general
-    arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument('--embed', default='bert',help='elmo bert flair')
-    arg_parser.add_argument('--batch', default=64,help='16 32 64 128')
-    arg_parser.add_argument('--hiddensize', default=256,help='128 64 512')
-    return arg_parser.parse_args()
 
-ARGS = parse_args()
 
 # define columns
 columns = {0: 'text', 1: '_', 2: '_', 3: 'ner'}
@@ -67,11 +73,26 @@ elif embed == "xlnet":
     embedding = XLNetEmbeddings()
 elif embed == "flair":
     embedding = StackedEmbeddings([FlairEmbeddings('news-forward'),FlairEmbeddings('news-backward')])
-elif embed == "mix_ebx":
+elif embed == "mix_xf":
     embedding = StackedEmbeddings([
-        ELMoEmbeddings("small"),
-        BertEmbeddings(),
         XLNetEmbeddings(),
+        PooledFlairEmbeddings('news-forward'),
+        PooledFlairEmbeddings('news-backward')
+    ])
+elif embed == "mix_xfe":
+    embedding = StackedEmbeddings([
+        XLNetEmbeddings(),
+        PooledFlairEmbeddings('news-forward'),
+        PooledFlairEmbeddings('news-backward'),
+        ELMoEmbeddings("small")
+    ])
+elif embed == "mix_xfeb":
+    embedding = StackedEmbeddings([
+        XLNetEmbeddings(),
+        PooledFlairEmbeddings('news-forward'),
+        PooledFlairEmbeddings('news-backward'),
+        ELMoEmbeddings("small"),
+        BertEmbeddings()
     ])
 elif embed == "mix_flair":
     embedding = StackedEmbeddings([
