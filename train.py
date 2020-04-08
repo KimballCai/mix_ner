@@ -73,27 +73,9 @@ elif embed == "xlnet":
     embedding = XLNetEmbeddings()
 elif embed == "flair":
     embedding = StackedEmbeddings([FlairEmbeddings('news-forward'),FlairEmbeddings('news-backward')])
-elif embed == "mix_xf":
-    embedding = StackedEmbeddings([
-        XLNetEmbeddings(),
-        PooledFlairEmbeddings('news-forward'),
-        PooledFlairEmbeddings('news-backward')
-    ])
-elif embed == "mix_xfe":
-    embedding = StackedEmbeddings([
-        XLNetEmbeddings(),
-        PooledFlairEmbeddings('news-forward'),
-        PooledFlairEmbeddings('news-backward'),
-        ELMoEmbeddings("small")
-    ])
-elif embed == "mix_xfeb":
-    embedding = StackedEmbeddings([
-        XLNetEmbeddings(),
-        PooledFlairEmbeddings('news-forward'),
-        PooledFlairEmbeddings('news-backward'),
-        ELMoEmbeddings("small"),
-        BertEmbeddings()
-    ])
+elif embed == "pool_flair_f":
+    embedding = StackedEmbeddings([PooledFlairEmbeddings('news-forward'), PooledFlairEmbeddings('news-backward')])
+
 elif embed == "mix_flair":
     embedding = StackedEmbeddings([
         WordEmbeddings('glove'),
@@ -105,9 +87,21 @@ elif embed == "mix_flair":
         FlairEmbeddings('news-forward'),
         FlairEmbeddings('news-backward'),
     ])
-elif embed == "pool_flair_f":
-    embedding = StackedEmbeddings([PooledFlairEmbeddings('news-forward'),PooledFlairEmbeddings('news-backward')])
-    
+elif embed[:3] == "mix":
+    embeds = embed.split("_")[1]
+    target = []
+    for e in embeds:
+        if e == "a":
+            target.append(BertEmbeddings())
+        if e == "e":
+            target.append(ELMoEmbeddings("small"))
+        if e == "f":
+            target.append(PooledFlairEmbeddings('news-forward'))
+            target.append(PooledFlairEmbeddings('news-backward'))
+        if e == "x":
+            target.append(XLNetEmbeddings())
+    embedding = StackedEmbeddings(target)
+
 
 # 5. initialize sequence tagger
 from flair.models import SequenceTagger

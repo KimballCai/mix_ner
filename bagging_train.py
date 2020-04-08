@@ -29,14 +29,16 @@ print(tag_dictionary)
 
 from flair.embeddings import ELMoEmbeddings,BertEmbeddings,FlairEmbeddings
 from flair.models import SequenceTagger
+from ensemble_trainer import ModelStackTrainer,EnsembleTagger
+from datetime import datetime
 
-elmo_tagger = SequenceTagger(hidden_size=256,
+elmo_tagger = EnsembleTagger(hidden_size=256,
                              embeddings=ELMoEmbeddings('small'),
                              tag_dictionary=tag_dictionary,
                              tag_type=tag_type,
                              use_crf=True)
 
-bert_tagger = SequenceTagger(hidden_size=256,
+bert_tagger = EnsembleTagger(hidden_size=256,
                              embeddings=BertEmbeddings(),
                              tag_dictionary=tag_dictionary,
                              tag_type=tag_type,
@@ -47,8 +49,7 @@ bert_tagger = SequenceTagger(hidden_size=256,
 #                               tag_type=tag_type,
 #                               use_crf=True)
 
-from ensemble_trainer import ModelStackTrainer
-from datetime import datetime
+
 
 
 
