@@ -142,6 +142,78 @@ def _calculate_loss(model, features: torch.tensor, sentences: List[Sentence]):
 		return score
 
 
+def get_position_tag(tag_str):
+	dash_index = tag_str.find("-")
+	if dash_index == -1:
+		return tag_str
+	return tag_str[0:dash_index]
+
+
+def get_classification_tag(tag_str):
+	dash_index = tag_str.find("-")
+	if dash_index == -1:
+		return tag_str
+	return tag_str[dash_index + 1:]
+
+
+def vote(vote_list):
+	'''
+	vote_list=['B-LOC','B-MISC','I-LOC',...]
+	'''
+	classificatin_vote = {'ORG': 0, 'PER': 0, 'MISC': 0, 'LOC': 0, 'O': 0}
+	position_vote = {'B': 0, 'I': 0, 'O': 0}
+	for vote_tag in vote_list:
+		tag = 'O' if vote_tag == '<unk>' or vote_tag == '<START>' or vote_tag == '<STOP>' else vote_tag
+		temp_position = get_position_tag(tag)
+		position_vote[temp_position] = position_vote[temp_position] + 1
+
+		temp_classification = get_classification_tag(tag)
+		classificatin_vote[temp_classification] = classificatin_vote[temp_classification] + 1
+
+	final_position = max(position_vote, key=position_vote.get)
+	final_classificatin = max(classificatin_vote, key=classificatin_vote.get)
+	if (final_position == 'O') and (final_classificatin == 'O'):
+		return 'O'
+	return final_position + "-" + final_classificatin
+
+
+def _predict_batch(models, batch):
+	with torch.no_grad():
+		losses = []
+		tags = []
+		for i, model in enumerate(models):
+			sentences = deepcopy(batch)
+			# features = model.forward(sentences)
+			# losses.append(model._calculate_loss(features, sentences))
+			# batch_tag, _ = model._obtain_labels(
+			# 	feature=features,
+			# 	batch_sentences=sentences,
+			# 	transitions=model.transitions,
+			# 	get_all_tags=False,
+			# )
+			losses.append(model.forward_loss(sentences).detach().cpu().numpy())
+			model.predict(sentences)
+			batch_tag = [[token.get_tag("ner").value for token in sentence] for sentence in sentences]
+			tags.append(batch_tag)
+		tags = [[Label(vote(token)) for token in sentence]
+				for sentence in [list(zip(*x)) for x in list(zip(*tags))]]
+
+	return np.mean(losses), tags
+
+
+def _predict_sentence(models, sentence):
+	with torch.no_grad():
+		tags = [] # [List[List[Label]]]
+		for i, model in enumerate(models):
+			seq = deepcopy(sentence)
+			model.predict(seq)
+			batch_tag = [token.get_tag("ner").value for token in seq]
+			tags.append(batch_tag)
+		tags = [Label(vote(token)) for token in np.transpose(tags, (1,0))]
+
+	return tags
+
+
 class EnsembleTagger(flair.nn.Model):
 	def __init__(self, models, tag_type, mode='loss'):
 		super().__init__()
@@ -165,68 +237,14 @@ class EnsembleTagger(flair.nn.Model):
 				features = _forward(model, sentences)
 				losses.append(_calculate_loss(model, features, sentences))
 			return torch.mean(torch.stack(losses))
-	
-
-	def get_position_tag(tag_str):
-		dash_index = tag_str.find("-")
-		if dash_index == -1:
-			return tag_str
-		return tag_str[0:dash_index]
 
 
-	def get_classification_tag(tag_str):
-		dash_index = tag_str.find("-")
-		if dash_index == -1:
-			return tag_str
-		return tag_str[dash_index + 1:]
-
-
-	def vote(vote_list):
-		'''
-		vote_list=['B-LOC','B-MISC','I-LOC',...]
-		'''
-		classificatin_vote = {'ORG': 0, 'PER': 0, 'MISC': 0, 'LOC': 0, 'O': 0}
-		position_vote = {'B': 0, 'I': 0, 'O': 0}
-		for vote_tag in vote_list:
-			temp_position = get_position_tag(vote_tag)
-			position_vote[temp_position] = position_vote[temp_position] + 1
-
-			temp_classification = get_classification_tag(vote_tag)
-			classificatin_vote[temp_classification] = classificatin_vote[temp_classification] + 1
-
-		final_position = max(position_vote, key=position_vote.get)
-		final_classificatin = max(classificatin_vote, key=classificatin_vote.get)
-		if (final_position == 'O') and (final_classificatin == 'O'):
-			return 'O'
-		return final_position + "-" + final_classificatin
-	
-
-	def _predict_batch(self, models, batch):
-		with torch.no_grad():
-			losses = []
-			tags = [] # List[List[List[Label]]]
-			for model in models:
-				features = model.forward(batch)
-				losses.append(model._calculate_loss(features, batch))
-				batch_tag, _ = model._obtain_labels(
-					feature=features,
-					batch_sentences=batch,
-					transitions=model.transitions,
-					get_all_tags=False,
-				)
-				tags.append(batch_tag)
-			tags = np.transpose(tags, (1,2,0))
-			tags = [[vote(token) for token in sentence] for sentence in tags] # List[List[Label]]
-
-		return np.mean(losses), tags
-
-
-	def evaluate(self, data_loader, out_path, embedding_storage_mode="none"):
+	def evaluate(self, data_loader, out_path=None, embedding_storage_mode="none"):
 		eval_loss = 0
 
 		batch_no: int = 0
 
-		metric = Metric("Evaluation", beta=self.beta)
+		metric = Metric("Evaluation", beta=1.0)
 
 		# lines: List[str] = []
 
@@ -300,6 +318,30 @@ class EnsembleTagger(flair.nn.Model):
 		)
 
 		return result, eval_loss
+
+
+	def predict(
+		self,
+		sentence,
+		all_tag_prob: bool = False
+	) -> List[Sentence]:
+		
+		with torch.no_grad():
+
+			results: List[Sentence] = sentences
+
+			_, tags = _predict_sentence(self.__models, sentence)
+
+			for (sentence, sent_tags) in zip(batch, tags):
+				for (token, tag) in zip(sentence.tokens, sent_tags):
+					token.add_tag_label(self.tag_type, tag)
+
+			# clearing token embeddings to save memory
+			store_embeddings(batch, storage_mode=embedding_storage_mode)
+
+			results = sentences
+			assert len(sentences) == len(results)
+			return results
 
 
 	def _get_state_dict(self):
