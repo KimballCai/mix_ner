@@ -320,28 +320,23 @@ class EnsembleTagger(flair.nn.Model):
 		return result, eval_loss
 
 
-	def predict(
-		self,
-		sentence,
-		all_tag_prob: bool = False
-	) -> List[Sentence]:
+	def predict(self, sentence, all_tag_prob=False, embedding_storage_mode="none"):
 		
 		with torch.no_grad():
 
-			results: List[Sentence] = sentences
+			result = sentence
 
-			_, tags = _predict_sentence(self.__models, sentence)
+			tags = _predict_sentence(self.__models, sentence)
 
-			for (sentence, sent_tags) in zip(batch, tags):
-				for (token, tag) in zip(sentence.tokens, sent_tags):
-					token.add_tag_label(self.tag_type, tag)
+			for (token, tag) in zip(sentence.tokens, tags):
+				token.add_tag_label(self.tag_type, tag)
 
 			# clearing token embeddings to save memory
-			store_embeddings(batch, storage_mode=embedding_storage_mode)
+			store_embeddings(sentence, storage_mode=embedding_storage_mode)
 
-			results = sentences
-			assert len(sentences) == len(results)
-			return results
+			result = sentence
+			assert len(sentence) == len(result)
+			return result
 
 
 	def _get_state_dict(self):
@@ -362,7 +357,9 @@ class EnsembleTagger(flair.nn.Model):
 		mode = 'loss' if "mode" not in state.keys() else state["mode"]
 		tag_type = 'ner' if "tag_type" not in state.keys() else state["tag_type"]
 		models = [SequenceTagger._init_model_with_state_dict(model_state) for model_state in state["models"]]
-		model = EnsembleTagger()
+		model = EnsembleTagger(models=models,
+							   tag_type=tag_type,
+							   mode=mode)
 		model.load_state_dict(state["state_dict"])
 		return model
 
