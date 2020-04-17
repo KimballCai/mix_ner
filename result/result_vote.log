@@ -1,0 +1,204 @@
+nohup: ignoring input
+/home/wing.nus/.local/lib/python3.7/site-packages/tensorflow/python/framework/dtypes.py:516: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_qint8 = np.dtype([("qint8", np.int8, 1)])
+/home/wing.nus/.local/lib/python3.7/site-packages/tensorflow/python/framework/dtypes.py:517: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_quint8 = np.dtype([("quint8", np.uint8, 1)])
+/home/wing.nus/.local/lib/python3.7/site-packages/tensorflow/python/framework/dtypes.py:518: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_qint16 = np.dtype([("qint16", np.int16, 1)])
+/home/wing.nus/.local/lib/python3.7/site-packages/tensorflow/python/framework/dtypes.py:519: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_quint16 = np.dtype([("quint16", np.uint16, 1)])
+/home/wing.nus/.local/lib/python3.7/site-packages/tensorflow/python/framework/dtypes.py:520: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_qint32 = np.dtype([("qint32", np.int32, 1)])
+/home/wing.nus/.local/lib/python3.7/site-packages/tensorflow/python/framework/dtypes.py:525: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  np_resource = np.dtype([("resource", np.ubyte, 1)])
+2020-04-15 02:31:16,188 Reading data from data
+2020-04-15 02:31:16,189 Train: data/train.txt
+2020-04-15 02:31:16,189 Dev: data/valid.txt
+2020-04-15 02:31:16,189 Test: data/test.txt
+Corpus: 14041 train + 3250 dev + 3453 test sentences
+Dictionary with 12 tags: <unk>, O, B-ORG, B-MISC, B-PER, I-PER, B-LOC, I-ORG, I-MISC, I-LOC, <START>, <STOP>
+['<unk>', 'O', 'B-ORG', 'B-MISC', 'B-PER', 'I-PER', 'B-LOC', 'I-ORG', 'I-MISC', 'I-LOC', '<START>', '<STOP>']
+Already read all required file!
+--------------BERT EVALUATION---------------
+processed 46435 tokens with 5648 phrases; found: 5681 phrases; correct: 5126.
+accuracy:  92.00%; (non-O)
+accuracy:  97.98%; precision:  90.23%; recall:  90.76%; FB1:  90.49
+              LOC: precision:  91.24%; recall:  92.39%; FB1:  91.81  1689
+             MISC: precision:  78.96%; recall:  80.20%; FB1:  79.58  713
+              ORG: precision:  87.62%; recall:  88.20%; FB1:  87.91  1672
+              PER: precision:  96.89%; recall:  96.29%; FB1:  96.59  1607
+(90.23059320542158, 90.75779036827196, 90.49342395621855)
+-------------------END----------------------
+--------------ELMO EVALUATION---------------
+processed 46435 tokens with 5648 phrases; found: 5686 phrases; correct: 5101.
+accuracy:  91.35%; (non-O)
+accuracy:  97.84%; precision:  89.71%; recall:  90.32%; FB1:  90.01
+              LOC: precision:  91.89%; recall:  91.73%; FB1:  91.81  1665
+             MISC: precision:  76.79%; recall:  79.63%; FB1:  78.18  728
+              ORG: precision:  87.46%; recall:  88.14%; FB1:  87.80  1674
+              PER: precision:  95.61%; recall:  95.73%; FB1:  95.67  1619
+(89.71157228279985, 90.31515580736544, 90.01235221457561)
+-------------------END----------------------
+--------------XLNET EVALUATION---------------
+processed 46435 tokens with 5648 phrases; found: 5736 phrases; correct: 5027.
+accuracy:  90.47%; (non-O)
+accuracy:  97.59%; precision:  87.64%; recall:  89.00%; FB1:  88.32
+              LOC: precision:  90.48%; recall:  91.73%; FB1:  91.10  1691
+             MISC: precision:  75.77%; recall:  80.63%; FB1:  78.12  747
+              ORG: precision:  84.36%; recall:  85.43%; FB1:  84.89  1682
+              PER: precision:  93.56%; recall:  93.51%; FB1:  93.54  1616
+(87.63947001394699, 89.00495750708215, 88.31693605059733)
+-------------------END----------------------
+--------------POOL-FLAIR EVALUATION---------------
+processed 46435 tokens with 5648 phrases; found: 5733 phrases; correct: 5130.
+accuracy:  92.04%; (non-O)
+accuracy:  97.94%; precision:  89.48%; recall:  90.83%; FB1:  90.15
+              LOC: precision:  91.93%; recall:  92.21%; FB1:  92.07  1673
+             MISC: precision:  76.64%; recall:  79.91%; FB1:  78.24  732
+              ORG: precision:  85.54%; recall:  89.77%; FB1:  87.60  1743
+              PER: precision:  97.16%; recall:  95.24%; FB1:  96.19  1585
+(89.48194662480377, 90.828611898017, 90.15025041736227)
+-------------------END----------------------
+--------------ELMO+XLNET+FLAIR HIERARCHY VOTE EVALUATION---------------
+processed 46435 tokens with 5648 phrases; found: 5733 phrases; correct: 5157.
+accuracy:  92.38%; (non-O)
+accuracy:  98.05%; precision:  89.95%; recall:  91.31%; FB1:  90.62
+              LOC: precision:  92.66%; recall:  92.27%; FB1:  92.46  1661
+             MISC: precision:  78.62%; recall:  81.20%; FB1:  79.89  725
+              ORG: precision:  85.91%; recall:  89.95%; FB1:  87.88  1739
+              PER: precision:  96.64%; recall:  96.10%; FB1:  96.37  1608
+(89.95290423861853, 91.30665722379604, 90.62472541955891)
+-------------------ELMO+XLNET+FLAIR END----------------------
+--------------ELMO+XLNET+FLAIR VOTE EVALUATION---------------
+processed 46435 tokens with 5648 phrases; found: 5677 phrases; correct: 5146.
+accuracy:  92.18%; (non-O)
+accuracy:  98.09%; precision:  90.65%; recall:  91.11%; FB1:  90.88
+              LOC: precision:  92.72%; recall:  92.39%; FB1:  92.55  1662
+             MISC: precision:  79.55%; recall:  80.91%; FB1:  80.23  714
+              ORG: precision:  87.30%; recall:  89.40%; FB1:  88.34  1701
+              PER: precision:  97.00%; recall:  95.98%; FB1:  96.49  1600
+(90.64646820503786, 91.11189801699717, 90.87858719646799)
+-------------------ELMO+XLNET+FLAIR END----------------------
+--------------BERT+XLNET+FLAIR HIERARCHY VOTE EVALUATION---------------
+processed 46435 tokens with 5648 phrases; found: 5736 phrases; correct: 5191.
+accuracy:  92.95%; (non-O)
+accuracy:  98.22%; precision:  90.50%; recall:  91.91%; FB1:  91.20
+              LOC: precision:  92.97%; recall:  92.81%; FB1:  92.89  1665
+             MISC: precision:  80.17%; recall:  82.34%; FB1:  81.24  721
+              ORG: precision:  85.95%; recall:  90.61%; FB1:  88.22  1751
+              PER: precision:  97.56%; recall:  96.47%; FB1:  97.01  1599
+(90.49860529986053, 91.90864022662889, 91.19817287420942)
+-------------------BERT+XLNET+FLAIR END----------------------
+--------------BERT+XLNET+FLAIR VOTE EVALUATION---------------
+processed 46435 tokens with 5648 phrases; found: 5677 phrases; correct: 5179.
+accuracy:  92.69%; (non-O)
+accuracy:  98.23%; precision:  91.23%; recall:  91.70%; FB1:  91.46
+              LOC: precision:  92.97%; recall:  92.81%; FB1:  92.89  1665
+             MISC: precision:  80.67%; recall:  82.05%; FB1:  81.36  714
+              ORG: precision:  88.01%; recall:  90.13%; FB1:  89.05  1701
+              PER: precision:  97.56%; recall:  96.35%; FB1:  96.95  1597
+(91.22776114144796, 91.69617563739378, 91.46136865342164)
+-------------------BERT+XLNET+FLAIR END----------------------
+--------------BERT+ELMO+FLAIR HIERARCHY VOTE EVALUATION---------------
+processed 46435 tokens with 5648 phrases; found: 5715 phrases; correct: 5208.
+accuracy:  93.28%; (non-O)
+accuracy:  98.31%; precision:  91.13%; recall:  92.21%; FB1:  91.67
+              LOC: precision:  93.65%; recall:  92.87%; FB1:  93.26  1654
+             MISC: precision:  79.67%; recall:  82.62%; FB1:  81.12  728
+              ORG: precision:  87.44%; recall:  90.97%; FB1:  89.17  1728
+              PER: precision:  97.69%; recall:  96.97%; FB1:  97.33  1605
+(91.12860892388451, 92.20963172804532, 91.66593329226437)
+-------------------BERT+ELMO+FLAIR END----------------------
+--------------BERT+ELMO+FLAIR VOTE EVALUATION---------------
+processed 46435 tokens with 5648 phrases; found: 5649 phrases; correct: 5195.
+accuracy:  92.90%; (non-O)
+accuracy:  98.31%; precision:  91.96%; recall:  91.98%; FB1:  91.97
+              LOC: precision:  93.72%; recall:  92.99%; FB1:  93.35  1655
+             MISC: precision:  80.50%; recall:  82.34%; FB1:  81.41  718
+              ORG: precision:  89.39%; recall:  90.31%; FB1:  89.85  1678
+              PER: precision:  98.00%; recall:  96.85%; FB1:  97.42  1598
+(91.96317932377413, 91.97946175637394, 91.97131981942108)
+-------------------BERT+ELMO+FLAIR END----------------------
+--------------BERT+ELMO+XLNET HIERARCHY VOTE EVALUATION---------------
+processed 46435 tokens with 5648 phrases; found: 5721 phrases; correct: 5187.
+accuracy:  92.91%; (non-O)
+accuracy:  98.23%; precision:  90.67%; recall:  91.84%; FB1:  91.25
+              LOC: precision:  93.14%; recall:  92.81%; FB1:  92.97  1662
+             MISC: precision:  79.26%; recall:  82.19%; FB1:  80.70  728
+              ORG: precision:  87.42%; recall:  90.37%; FB1:  88.87  1717
+              PER: precision:  96.72%; recall:  96.54%; FB1:  96.63  1614
+(90.66596748820136, 91.83781869688386, 91.24813088222359)
+-------------------BERT+ELMO+XLNET END----------------------
+--------------BERT+ELMO+XLNET VOTE EVALUATION---------------
+processed 46435 tokens with 5648 phrases; found: 5648 phrases; correct: 5167.
+accuracy:  92.38%; (non-O)
+accuracy:  98.19%; precision:  91.48%; recall:  91.48%; FB1:  91.48
+              LOC: precision:  93.14%; recall:  92.75%; FB1:  92.94  1661
+             MISC: precision:  80.11%; recall:  82.05%; FB1:  81.07  719
+              ORG: precision:  89.31%; recall:  89.52%; FB1:  89.42  1665
+              PER: precision:  97.13%; recall:  96.29%; FB1:  96.71  1603
+(91.48371104815864, 91.48371104815864, 91.48371104815864)
+-------------------BERT+ELMO+XLNET END----------------------
+--------------BERT+ELMO+XLNET+FLAIR HIERARCHY VOTE EVALUATION---------------
+processed 46435 tokens with 5648 phrases; found: 5776 phrases; correct: 5204.
+accuracy:  93.22%; (non-O)
+accuracy:  98.16%; precision:  90.10%; recall:  92.14%; FB1:  91.11
+              LOC: precision:  93.46%; recall:  92.51%; FB1:  92.98  1651
+             MISC: precision:  79.26%; recall:  82.76%; FB1:  80.98  733
+                O: precision:   0.00%; recall:   0.00%; FB1:   0.00  33
+              ORG: precision:  86.60%; recall:  91.45%; FB1:  88.96  1754
+              PER: precision:  97.26%; recall:  96.54%; FB1:  96.90  1605
+(90.09695290858726, 92.13881019830028, 91.1064425770308)
+-------------------BERT+ELMO+XLNET+FLAIR END----------------------
+--------------BERT+ELMO+XLNET+FLAIR VOTE EVALUATION---------------
+processed 46435 tokens with 5648 phrases; found: 5657 phrases; correct: 5175.
+accuracy:  92.63%; (non-O)
+accuracy:  98.28%; precision:  91.48%; recall:  91.63%; FB1:  91.55
+              LOC: precision:  93.45%; recall:  92.39%; FB1:  92.92  1649
+             MISC: precision:  81.02%; recall:  81.48%; FB1:  81.25  706
+              ORG: precision:  88.09%; recall:  90.85%; FB1:  89.45  1713
+              PER: precision:  97.73%; recall:  96.04%; FB1:  96.88  1589
+(91.47958281774791, 91.62535410764873, 91.55241043785935)
+-------------------BERT+ELMO+XLNET+FLAIR END----------------------
+--------------MULTI 8 MODEL (128+256) HIERARCHY VOTE EVALUATION---------------
+processed 46435 tokens with 5648 phrases; found: 5755 phrases; correct: 5216.
+accuracy:  93.39%; (non-O)
+accuracy:  98.26%; precision:  90.63%; recall:  92.35%; FB1:  91.48
+              LOC: precision:  93.43%; recall:  92.93%; FB1:  93.18  1659
+             MISC: precision:  81.78%; recall:  83.76%; FB1:  82.76  719
+                O: precision:   0.00%; recall:   0.00%; FB1:   0.00  37
+              ORG: precision:  87.97%; recall:  91.15%; FB1:  89.53  1721
+              PER: precision:  96.60%; recall:  96.72%; FB1:  96.66  1619
+(90.63423110338836, 92.3512747875354, 91.48469700955889)
+-------------------MULTI 8 MODEL (128+256) END----------------------
+--------------MULTI 8 MODEL (128+256) VOTE EVALUATION---------------
+processed 46435 tokens with 5648 phrases; found: 5661 phrases; correct: 5190.
+accuracy:  93.02%; (non-O)
+accuracy:  98.33%; precision:  91.68%; recall:  91.89%; FB1:  91.79
+              LOC: precision:  93.48%; recall:  92.81%; FB1:  93.14  1656
+             MISC: precision:  81.93%; recall:  82.05%; FB1:  81.99  703
+              ORG: precision:  88.59%; recall:  90.67%; FB1:  89.62  1700
+              PER: precision:  97.38%; recall:  96.47%; FB1:  96.92  1602
+(91.67991520932698, 91.89093484419264, 91.78530374038377)
+-------------------MULTI 8 MODEL (128+256) END----------------------
+--------------MULTI 16 MODEL (64+128+256+512) HIERARCHY VOTE EVALUATION---------------
+processed 46435 tokens with 5648 phrases; found: 5744 phrases; correct: 5206.
+accuracy:  93.34%; (non-O)
+accuracy:  98.25%; precision:  90.63%; recall:  92.17%; FB1:  91.40
+              LOC: precision:  93.49%; recall:  92.99%; FB1:  93.24  1659
+             MISC: precision:  80.00%; recall:  82.62%; FB1:  81.29  725
+                O: precision:   0.00%; recall:   0.00%; FB1:   0.00  30
+              ORG: precision:  88.00%; recall:  90.97%; FB1:  89.46  1717
+              PER: precision:  96.96%; recall:  96.72%; FB1:  96.84  1613
+(90.63370473537604, 92.1742209631728, 91.39747191011236)
+-------------------MULTI 16 MODEL (64+128+256+512) END----------------------
+--------------MULTI 16 MODEL (64+128+256+512) VOTE EVALUATION---------------
+processed 46435 tokens with 5648 phrases; found: 5670 phrases; correct: 5191.
+accuracy:  93.08%; (non-O)
+accuracy:  98.33%; precision:  91.55%; recall:  91.91%; FB1:  91.73
+              LOC: precision:  93.48%; recall:  92.87%; FB1:  93.17  1657
+             MISC: precision:  81.29%; recall:  82.34%; FB1:  81.81  711
+              ORG: precision:  88.47%; recall:  90.55%; FB1:  89.50  1700
+              PER: precision:  97.38%; recall:  96.47%; FB1:  96.92  1602
+(91.55202821869489, 91.90864022662889, 91.72998763032338)
+-------------------MULTI 16 MODEL (64+128+256+512)) END----------------------

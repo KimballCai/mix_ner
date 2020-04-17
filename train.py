@@ -19,6 +19,7 @@ def parse_args():
     arg_parser.add_argument('--embed', default='bert',help='elmo bert flair')
     arg_parser.add_argument('--batch', default=64,help='16 32 64 128')
     arg_parser.add_argument('--hiddensize', default=256,help='128 64 512')
+    arg_parser.add_argument('--lr', default=0.01, help='learning rate')
     arg_parser.add_argument('--gpu', default="0", help='0,1,2')
     return arg_parser.parse_args()
 
@@ -38,6 +39,9 @@ from flair.embeddings import CharacterEmbeddings, WordEmbeddings
 from flair.embeddings import PooledFlairEmbeddings
 
 
+
+if not os.path.exists("./log"):
+    os.mkdir("./log")
 
 # define columns
 columns = {0: 'text', 1: '_', 2: '_', 3: 'ner'}
@@ -100,6 +104,9 @@ elif embed[:3] == "mix":
             target.append(PooledFlairEmbeddings('news-backward'))
         if e == "x":
             target.append(XLNetEmbeddings())
+        else:
+            raise NotImplementedError("not implement this encoder!")
+
     embedding = StackedEmbeddings(target)
 
 
@@ -121,7 +128,7 @@ timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
 
 # 7. start training
 trainer.train("./log/%s_%s_%s/" % (ARGS.embed, str(timestamp), str(ARGS.hiddensize)),
-              learning_rate=0.01,
+              learning_rate=ARGS.lr,
               mini_batch_size=int(ARGS.batch),
               max_epochs=150)
 
