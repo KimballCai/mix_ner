@@ -160,21 +160,26 @@ def vote(vote_list):
 	'''
 	vote_list=['B-LOC','B-MISC','I-LOC',...]
 	'''
-	classificatin_vote = {'ORG': 0, 'PER': 0, 'MISC': 0, 'LOC': 0, 'O': 0}
-	position_vote = {'B': 0, 'I': 0, 'O': 0}
+	# classificatin_vote = {'ORG': 0, 'PER': 0, 'MISC': 0, 'LOC': 0, 'O': 0}
+	# position_vote = {'B': 0, 'I': 0, 'O': 0}
+	# for vote_tag in vote_list:
+	# 	tag = 'O' if vote_tag == '<unk>' or vote_tag == '<START>' or vote_tag == '<STOP>' else vote_tag
+	# 	temp_position = get_position_tag(tag)
+	# 	position_vote[temp_position] = position_vote[temp_position] + 1
+
+	# 	temp_classification = get_classification_tag(tag)
+	# 	classificatin_vote[temp_classification] = classificatin_vote[temp_classification] + 1
+
+	# final_position = max(position_vote, key=position_vote.get)
+	# final_classificatin = max(classificatin_vote, key=classificatin_vote.get)
+	# if (final_position == 'O') and (final_classificatin == 'O'):
+	# 	return 'O'
+	# return final_position + "-" + final_classificatin
+	classification_vote = {'B-ORG': 0, 'B-PER': 0, 'B-MISC': 0, 'B-LOC': 0, 'I-ORG': 0, 'I-PER': 0, 'I-MISC': 0, 'I-LOC': 0, 'O': 0}
 	for vote_tag in vote_list:
-		tag = 'O' if vote_tag == '<unk>' or vote_tag == '<START>' or vote_tag == '<STOP>' else vote_tag
-		temp_position = get_position_tag(tag)
-		position_vote[temp_position] = position_vote[temp_position] + 1
-
-		temp_classification = get_classification_tag(tag)
-		classificatin_vote[temp_classification] = classificatin_vote[temp_classification] + 1
-
-	final_position = max(position_vote, key=position_vote.get)
-	final_classificatin = max(classificatin_vote, key=classificatin_vote.get)
-	if (final_position == 'O') and (final_classificatin == 'O'):
-		return 'O'
-	return final_position + "-" + final_classificatin
+		classification_vote[vote_tag] += 1
+		final_classification = max(classification_vote, key=classification_vote.get)
+		return final_classification
 
 
 def _predict_batch(models, batch):
