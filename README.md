@@ -23,18 +23,18 @@ python test.py --path "./log/elmo_20200330002549_256/"
 - Avg-agg & Con-agg
 Get prediction probability output of single model. The result (porbability) will be saved automatically into the folder /`result/prob/`
 ```bash
-python model_avg_conf_result.py
+python eval/model_avg_conf_result.py
 ```
 
 Then we can get the **average prbability ensemble prediction** and **highest confidence ensemble prediction** by excute the command line below. The F1 result will be saved into log file.
 ```bash
-python -u avg_conf_predict.py > result_avg_confidence 2>&1 &
+python -u eval/avg_conf_predict.py > result_avg_confidence 2>&1 &
 ```
 
 - N-Vote & H-Vote
 Get result of single model. The result (tag list) will be saved automatically into the folder `/result/tag/`
 ```bash
-python model_vote_result.py
+pythoneval eval/model_vote_result.py
 ```
 
 Then we can get the **naive vote ensemble prediction** and **hierarchy ensemble prediction** by excute the command line below. The F1 result will be saved into log file.
