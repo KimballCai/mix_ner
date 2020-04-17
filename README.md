@@ -43,7 +43,7 @@ python -u vote_predict.py > result_vote.log 2>&1 &
 ```
 
 - Con-Vote
-We can reuse the ouput result from `/result/tag/`. We can get the **voting with confidence threshold ensemble prediction** by excute the command line below. The F1 result will be saved into log file.
+We can reuse the ouput result from `/result/prob/`. We can get the **voting with confidence threshold ensemble prediction** by excute the command line below. The F1 result will be saved into log file.
 ```bash
 python -u conf_vote_predict.py > result_conf_vote.log 2>&1 &
 ```
